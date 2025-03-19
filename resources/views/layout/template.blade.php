@@ -22,6 +22,7 @@
 
     @yield('script')
 
+    @include('component.toast')
 </body>
 
 </html>

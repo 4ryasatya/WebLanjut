@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
-
     public function __construct()
     {
         $this->points = new PointsModel();
@@ -38,6 +37,20 @@ class PointController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate(
+            [
+                'name' => 'required|unique:points,name',
+                'description' => 'required',
+                'geom_point' => 'required'
+            ],
+            [
+                'name.required' => 'Markes needs to have a name',
+                'name.unique' => 'Marker name already exists',
+                'description.required' => 'Description is required',
+                'geom_point.required' => 'Geometry is required'
+            ],
+        );
+
         $data = [
             'geom' => $request->geom_point,
             'name' => $request->name,
@@ -47,10 +60,12 @@ class PointController extends Controller
         // dd($request->all());
 
         //Create data
-        $this->points->create($data);
+        if ($this->points->create($data)) {
+            return redirect()->route('map')->with('error', 'Error');
+        }
 
         //Balikin tampilan ke peta
-        return redirect()->route('map');
+        return redirect()->route('map')->with('success', 'Marker has been added.');
     }
 
     /**
