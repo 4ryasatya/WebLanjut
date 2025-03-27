@@ -94,8 +94,7 @@
     </div>
 
     {{-- Modal Polygon --}}
-    <div class="modal fade" id="CreatePolygonModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="CreatePolygonModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -147,9 +146,13 @@
     <script>
         var map = L.map('map').setView([51.555162121140235, -0.10831397234064284], 13);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
 
         L.marker([51.555162121140235, -0.10831397234064284]).addTo(map)
             .bindPopup('The Carpet')
@@ -212,5 +215,85 @@
 
             drawnItems.addLayer(layer);
         });
+
+        //
+        var point = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Location: " + feature.properties.name + "<br>" +
+                    "Keterangan: " + feature.properties.description + "<br>" +
+                    "Created at: " + feature.properties.created_at
+                layer.on({
+                    click: function(e) {
+                        point.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        point.bindTooltip(feature.properties.name);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.points') }}", function(data) {
+            point.addData(data);
+            map.addLayer(point);
+        });
+
+        //Polyline
+        var polyline = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Location: " + feature.properties.name + "<br>" +
+                    "Length: " + feature.properties.length_km.toFixed(2) + " Km" + "<br>" +
+                    "Keterangan: " + feature.properties.description + "<br>" +
+                    "Created at: " + feature.properties.created_at
+                layer.on({
+                    click: function(e) {
+                        polyline.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        polyline.bindTooltip(feature.properties.kab_kota);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.polyline') }}", function(data) {
+            polyline.addData(data);
+            map.addLayer(polyline);
+        });
+
+        //Polygon
+        var polygon = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Location: " + feature.properties.name + "<br>" +
+                    "Area: " + feature.properties.luas_hektar.toFixed(2) + " Ha" + "<br>" +
+                    "Keterangan: " + feature.properties.description + "<br>" +
+                    "Created at: " + feature.properties.created_at
+                layer.on({
+                    click: function(e) {
+                        polygon.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        polygon.bindTooltip(feature.properties.kab_kota);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.polygon') }}", function(data) {
+            polygon.addData(data);
+            map.addLayer(polygon);
+        });
+
+        // Control Layer
+        var baseMaps = {
+            "OpenStreetMap": osm,
+            "Esri World Imagery": Esri_WorldImagery,
+        };
+
+        var overlayMaps = {
+            "Point": point,
+            "Polyline": polyline,
+            "Polygon": polygon,
+        };
+
+        var controllayer = L.control.layers(baseMaps, overlayMaps);
+        controllayer.addTo(map);
     </script>
 @endsection
