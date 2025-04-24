@@ -41,7 +41,8 @@ class PointController extends Controller
             [
                 'name' => 'required|unique:points,name',
                 'description' => 'required',
-                'geom_point' => 'required'
+                'geom_point' => 'required',
+                'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
             [
                 'name.required' => 'Markes needs to have a name',
@@ -51,10 +52,25 @@ class PointController extends Controller
             ],
         );
 
+        //Crate Images directory (if not exist)
+        if (!is_dir('storage/images')) {
+            mkdir('./storage/images', 0777);
+        }
+
+        // Get image File
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_point." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+        } else {
+            $name_image = null;
+        }
+
         $data = [
             'geom' => $request->geom_point,
             'name' => $request->name,
             'description' => $request->description,
+            'images' => $name_image
         ];
 
         // dd($request->all());

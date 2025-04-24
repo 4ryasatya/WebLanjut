@@ -35,6 +35,7 @@ class PolygonController extends Controller
         $request->validate(
             [
                 'name' => 'required|unique:polygon,name',
+                'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
             [
                 'name.required' => 'Polygon needs to have a name',
@@ -44,10 +45,20 @@ class PolygonController extends Controller
             ],
         );
 
+        // Get image File
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_polygon." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+        } else {
+            $name_image = null;
+        }
+
         $data = [
             'geom' => $request->geom_polygon,
             'name' => $request->name,
             'description' => $request->description,
+            'images' => $name_image
         ];
 
         $this->polygon->create($data);

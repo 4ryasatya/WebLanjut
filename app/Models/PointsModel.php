@@ -12,7 +12,7 @@ class PointsModel extends Model
     protected $guarded = ['id'];
     public function geojson_points()
     {
-        $points = $this->select(DB::raw('id, st_asgeojson(geom) as geom, name, description, created_at, updated_at'))->get();
+        $points = $this->select(DB::raw('id, st_asgeojson(geom) as geom, name, description, created_at, updated_at, images'))->get();
 
         $geojson = [
             'type' => 'FeatureCollection',
@@ -27,7 +27,8 @@ class PointsModel extends Model
                     'name' => $p->name,
                     'description' => $p->description,
                     'created_at' => $p->created_at,
-                    'updated_at' => $p->updated_at
+                    'updated_at' => $p->updated_at,
+                    'images' => $p->images
                 ],
             ];
 

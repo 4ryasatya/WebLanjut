@@ -36,6 +36,7 @@ class PolylineController extends Controller
         $request->validate(
             [
                 'name' => 'required|unique:polyline,name',
+                'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
             [
                 'name.required' => 'Polyline needs to have a name',
@@ -45,13 +46,23 @@ class PolylineController extends Controller
             ],
         );
 
+        // Get image File
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_polyline." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+        } else {
+            $name_image = null;
+        }
+
         $data = [
             'geom' => $request->geom_polyline,
             'name' => $request->name,
             'description' => $request->description,
+            'images' => $name_image,
         ];
 
-        $this -> polylines-> create($data);
+        $this->polylines->create($data);
         return redirect()->route('map')->with('success', 'Polyline has been added.');
     }
 

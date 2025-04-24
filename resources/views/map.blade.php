@@ -25,7 +25,7 @@
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Create Marker</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ route('points.store') }}">
+                <form method="POST" action="{{ route('points.store') }}" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
                         <div class="mb-3">
@@ -44,11 +44,20 @@
                             <textarea class="form-control" id="geom_point" name="geom_point" rows="3"></textarea>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Add an Image</label>
+                            <input type="file" class="form-control" id="image_point" name="image"
+                                onchange="document.getElementById('preview-image-point').src = window.URL.createObjectURL(this.files[0])">
+                            <img src="" alt="" id="preview-image-point" class="img-thumbnail"
+                                width="400">
+
+                        </div>
+
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submi" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -63,7 +72,7 @@
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Create Linestring</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ route('polylines.store') }}">
+                <form method="POST" action="{{ route('polylines.store') }}" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
                         <div class="mb-3">
@@ -82,11 +91,19 @@
                             <textarea class="form-control" id="geom_polyline" name="geom_polyline" rows="3"></textarea>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Add an Image</label>
+                            <input type="file" class="form-control" id="image_polyline" name="image"
+                                onchange="document.getElementById('preview-image-polyline').src = window.URL.createObjectURL(this.files[0])">
+                            <img src="" alt="" id="preview-image-polyline" class="img-thumbnail"
+                                width="400">
+                        </div>
+
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submi" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
@@ -94,14 +111,15 @@
     </div>
 
     {{-- Modal Polygon --}}
-    <div class="modal fade" id="CreatePolygonModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="CreatePolygonModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Create Polygon</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ route('polygon.store') }}">
+                <form method="POST" action="{{ route('polygon.store') }}" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
                         <div class="mb-3">
@@ -118,6 +136,14 @@
                         <div class="mb-3">
                             <label for="geom_polygon" class="form-label">Geometry</label>
                             <textarea class="form-control" id="geom_polygon" name="geom_polygon" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Add an Image</label>
+                            <input type="file" class="form-control" id="image_polygon" name="image"
+                                onchange="document.getElementById('preview-image-polygon').src = window.URL.createObjectURL(this.files[0])">
+                            <img src="" alt="" id="preview-image-polygon" class="img-thumbnail"
+                                width="400">
                         </div>
 
                     </div>
@@ -150,9 +176,10 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-        });
+        var Esri_WorldImagery = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            });
 
         L.marker([51.555162121140235, -0.10831397234064284]).addTo(map)
             .bindPopup('The Carpet')
@@ -221,7 +248,8 @@
             onEachFeature: function(feature, layer) {
                 var popupContent = "Location: " + feature.properties.name + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
-                    "Created at: " + feature.properties.created_at
+                    "Created at: " + feature.properties.created_at + "<br>" +
+                    "<img src='{{ asset('storage/images')}}/"+ feature.properties.images + "' width = '200' alt = ''>";
                 layer.on({
                     click: function(e) {
                         point.bindPopup(popupContent);
@@ -243,7 +271,8 @@
                 var popupContent = "Location: " + feature.properties.name + "<br>" +
                     "Length: " + feature.properties.length_km.toFixed(2) + " Km" + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
-                    "Created at: " + feature.properties.created_at
+                    "Created at: " + feature.properties.created_at + "<br>" +
+                    "<img src='{{ asset('storage/images')}}/"+ feature.properties.images + "' width = '200' alt = ''>";
                 layer.on({
                     click: function(e) {
                         polyline.bindPopup(popupContent);
@@ -265,7 +294,8 @@
                 var popupContent = "Location: " + feature.properties.name + "<br>" +
                     "Area: " + feature.properties.luas_hektar.toFixed(2) + " Ha" + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
-                    "Created at: " + feature.properties.created_at
+                    "Created at: " + feature.properties.created_at + "<br>" +
+                    "<img src='{{ asset('storage/images')}}/"+ feature.properties.images + "' width = '200' alt = ''>";
                 layer.on({
                     click: function(e) {
                         polygon.bindPopup(popupContent);
