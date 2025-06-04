@@ -262,7 +262,8 @@
                     '@csrf' + '@method('DELETE')' +
                     "<button class='btn btn-danger btn-sm' type='submit' onclick='return confirm( `Are you sure you want to delete this Point?` )'><i class='fa-solid fa-trash-can'></i> </button>" +
                     "</form>" + "<br>" +
-                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>";
+                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
+                    "<br>" + "<p>Dibuat Oleh: " + feature.properties.username + "</p>";
                 layer.on({
                     click: function(e) {
                         point.bindPopup(popupContent);
@@ -297,7 +298,8 @@
                     '@csrf' + '@method('DELETE')' +
                     "<button class='btn btn-danger btn-sm' type='submit' onclick='return confirm(`Are you sure you want to delete this Polyline?` )'><i class='fa-solid fa-trash-can'></i> Hapus</button>" +
                     "</form>" + "<br>" +
-                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>";
+                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
+                    "<br>" + "<p>Dibuat Oleh: " + feature.properties.username + "</p>";
                 layer.on({
                     click: function(e) {
                         polyline.bindPopup(popupContent);
@@ -331,7 +333,8 @@
                     '@csrf' + '@method('DELETE')' +
                     "<button class='btn btn-danger btn-sm' type='submit' onclick='return confirm(`Are you sure you want to delete this Polygon?` )'><i class='fa-solid fa-trash-can'></i> Hapus</button>" +
                     "</form>" + "<br>" +
-                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>";
+                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
+                    "<br>" + "<p>Dibuat Oleh: " + feature.properties.username + "</p>";
                 layer.on({
                     click: function(e) {
                         polygon.bindPopup(popupContent);

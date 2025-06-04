@@ -12,8 +12,10 @@ class PolylinesModel extends Model
 
     public function geojson_polyline()
     {
-        $polyline = $this->select(DB::raw('id, st_asgeojson(geom) as geom, name, description,
-        st_length(geom, true) as length_m, st_length(geom, true)/1000 as length_km, created_at, updated_at, images'))->get();
+        $polyline = $this->select(DB::raw('polyline.id, st_asgeojson(polyline.geom) as geom, polyline.name, polyline.description,
+        st_length(polyline.geom, true) as length_m, st_length(polyline.geom, true)/1000 as length_km, polyline.created_at, polyline.updated_at, polyline.user_id, users.name as user_created, images'))
+        ->LeftJoin('users', 'polyline.user_id', '=', 'users.id')
+        ->get();
 
         $geojson = [
             'type' => 'FeatureCollection',
@@ -31,7 +33,9 @@ class PolylinesModel extends Model
                     'description' => $p->description,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at,
-                    'images' => $p ->images
+                    'images' => $p ->images,
+                    'user_id' => $p->user_id,
+                    'username' => $p->user_created
                 ],
             ];
 

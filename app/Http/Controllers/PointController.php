@@ -70,7 +70,8 @@ class PointController extends Controller
             'geom' => $request->geom_point,
             'name' => $request->name,
             'description' => $request->description,
-            'images' => $name_image
+            'images' => $name_image,
+            'user_id' => auth()->user()->id
         ];
 
         // dd($request->all());
