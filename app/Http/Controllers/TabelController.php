@@ -20,7 +20,10 @@ class TabelController extends Controller
     {
         $data = [
             'title' => 'Tabel',
-            'points' => $this->points->all()
+            'points' => $this->points->all(),
+            'polyline' => $this->polyline->all(),
+            'polygon' => $this->polygon->all()
+
         ];
 
         return view('tabel', $data);
